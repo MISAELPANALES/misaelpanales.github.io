@@ -1,4 +1,9 @@
 {
+  "name": "notas-al-margen",
+  "version": "1.0.0",
+  "description": "Plataforma social de escritura anónima con seudónimos - ambientada en una misteriosa puerta y viejo librero",
+  "author": "Misael Panales",
+  "license": "MIT",
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4"

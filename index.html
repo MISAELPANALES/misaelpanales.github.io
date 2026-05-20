@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notas al Margen - Acceso</title>
+    <title>Notas al Margen</title>
     <style>
         * {
             margin: 0;
@@ -12,13 +12,20 @@
         }
         body {
             background-color: #080808;
+            font-family: 'Courier New', Courier, monospace;
+            color: #ccc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* ========== PANTALLA LOGIN ========== */
+        #pantallaLogin {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
-            color: #999;
         }
         .contenedor-central {
             display: flex;
@@ -160,6 +167,38 @@
         .campo input:focus {
             border-color: #777;
         }
+        .tabs-acceso {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #666;
+            padding: 0.8rem 1.2rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn:hover {
+            color: #999;
+        }
+        .tab-btn.activo {
+            color: #ddd;
+            border-bottom-color: #ddd;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.activo {
+            display: block;
+        }
         .botones-modal {
             display: flex;
             justify-content: space-between;
@@ -179,9 +218,13 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        .botones-modal button:hover {
+        .botones-modal button:hover:not(:disabled) {
             color: white;
             border-color: white;
+        }
+        .botones-modal button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         .mensaje-error {
             color: #aa5555;
@@ -193,6 +236,176 @@
             0% { opacity: 0.6; text-shadow: 0 0 4px rgba(255,255,255,0); }
             100% { opacity: 0.9; text-shadow: 0 0 8px rgba(255,255,255,0.15); }
         }
+        
+        /* ========== PANTALLA LIBRERO ========== */
+        #pantallaLibrero {
+            display: none;
+            padding: 2rem;
+            width: 100%;
+        }
+        .contenedor {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .cabecera {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #2a2a2a;
+            padding-bottom: 1rem;
+        }
+        .cabecera h1 {
+            font-size: 1.8rem;
+            letter-spacing: 6px;
+            font-weight: normal;
+            text-transform: lowercase;
+            color: #aaa;
+        }
+        .cabecera p {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        .imagen-librero {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            margin-bottom: 2rem;
+            filter: grayscale(0.2) sepia(0.1);
+        }
+        .botones {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .btn-librero {
+            background: transparent;
+            border: 1px solid #3a3a3a;
+            color: #ddd;
+            padding: 0.8rem 2rem;
+            font-family: inherit;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-librero:hover {
+            border-color: #aaa;
+            color: white;
+            box-shadow: 0 0 12px rgba(255,255,255,0.05);
+        }
+        .btn-librero:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .panel {
+            background: #0c0c0c;
+            border: 1px solid #2a2a2a;
+            padding: 1.8rem;
+            margin-top: 1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+        }
+        .panel h2 {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            margin-bottom: 1.2rem;
+            color: #b0b0b0;
+            text-transform: lowercase;
+            font-weight: normal;
+            border-left: 3px solid #444;
+            padding-left: 12px;
+        }
+        textarea {
+            width: 100%;
+            background: #010101;
+            border: 1px solid #333;
+            padding: 1rem;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+        .btn-submit {
+            background: transparent;
+            border: 1px solid #3a6a3a;
+            color: #8c8;
+            padding: 0.5rem 1.2rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .btn-submit:hover {
+            background: #1a2a1a;
+            border-color: #6a9a6a;
+            color: #cfc;
+        }
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .lista-aportes {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .aporte {
+            background: #050505;
+            border-left: 3px solid #3a3a3a;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .aporte .meta {
+            font-size: 0.7rem;
+            color: #777;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted #2a2a2a;
+            padding-bottom: 5px;
+        }
+        .aporte .seudonimo {
+            color: #b9b97a;
+            font-weight: bold;
+        }
+        .aporte .contenido {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+        .vacio {
+            text-align: center;
+            color: #555;
+            padding: 2rem;
+            font-style: italic;
+        }
+        .logout {
+            text-align: right;
+            margin-top: 2rem;
+        }
+        .logout button {
+            background: transparent;
+            border: 1px solid #444;
+            color: #888;
+            padding: 0.3rem 0.8rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.7rem;
+        }
+        footer {
+            margin-top: 3rem;
+            font-size: 0.7rem;
+            text-align: center;
+            color: #444;
+        }
+        
+        /* ========== BOTÓN MÚSICA ==========  */
         .btn-musica {
             position: fixed;
             bottom: 20px;
@@ -210,6 +423,7 @@
             z-index: 2000;
             transition: all 0.3s;
             color: #aaa;
+            padding: 0;
         }
         .btn-musica:hover {
             border-color: #aaa;
@@ -224,140 +438,141 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // === CONFIGURACIÓN SUPABASE ===
-        // REEMPLAZA con tus credenciales reales
         const SUPABASE_URL = 'https://ifuxbjkkagfxnilkliez.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_GnFnx7uWrbanBs_BVcgzBw_eljnBgZE';
-        
-        // Inicialización correcta del cliente
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
 </head>
 <body>
-<div class="contenedor-central" id="escena">
-    <div class="letrero">textos muertos en plumas agonizantes</div>
-    <button class="btn-entrar" id="btnEntrar">Entrar</button>
-    <div class="marco-puerta">
-        <div class="puerta" id="puerta">
-            <div class="picaporte"></div>
+
+<!-- ========== PANTALLA LOGIN ========== -->
+<div id="pantallaLogin">
+    <div class="contenedor-central" id="escena">
+        <div class="letrero">textos muertos en plumas agonizantes</div>
+        <button class="btn-entrar" id="btnEntrar">Entrar</button>
+        <div class="marco-puerta">
+            <div class="puerta" id="puerta">
+                <div class="picaporte"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalLogin" class="modal">
+        <div class="modal-contenido">
+            <h3>acceso al margen</h3>
+            
+            <div class="tabs-acceso">
+                <button class="tab-btn activo" data-tab="login">acceder</button>
+                <button class="tab-btn" data-tab="registro">registrarse</button>
+            </div>
+
+            <!-- TAB LOGIN -->
+            <div id="tab-login" class="tab-content activo">
+                <div class="campo">
+                    <label>email</label>
+                    <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="off">
+                </div>
+                <div class="campo">
+                    <label>contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="••••••">
+                </div>
+                <div class="botones-modal">
+                    <button id="btnAcceder">acceder</button>
+                    <button id="btnCancelarLogin">cancelar</button>
+                </div>
+                <div id="errorMsgLogin" class="mensaje-error"></div>
+            </div>
+
+            <!-- TAB REGISTRO -->
+            <div id="tab-registro" class="tab-content">
+                <div class="campo">
+                    <label>email</label>
+                    <input type="email" id="registerEmail" placeholder="tu@email.com" autocomplete="off">
+                </div>
+                <div class="campo">
+                    <label>contraseña</label>
+                    <input type="password" id="registerPassword" placeholder="••••••" minlength="6">
+                </div>
+                <div class="campo">
+                    <label>confirmar contraseña</label>
+                    <input type="password" id="registerPasswordConfirm" placeholder="••••••">
+                </div>
+                <div class="campo">
+                    <label>seudónimo</label>
+                    <input type="text" id="registerSeudonym" placeholder="nombre en las sombras" maxlength="30">
+                </div>
+                <div class="botones-modal">
+                    <button id="btnRegistrar">registrarse</button>
+                    <button id="btnCancelarRegistro">cancelar</button>
+                </div>
+                <div id="errorMsgRegistro" class="mensaje-error"></div>
+            </div>
         </div>
     </div>
 </div>
 
-<div id="modalLogin" class="modal">
-    <div class="modal-contenido">
-        <h3>acceso al margen</h3>
-        <div class="campo">
-            <label>email (login)</label>
-            <input type="email" id="loginInput" placeholder="tu@email.com" autocomplete="off">
+<!-- ========== PANTALLA LIBRERO ========== -->
+<div id="pantallaLibrero">
+    <div class="contenedor">
+        <div class="cabecera">
+            <h1>el librero de los márgenes</h1>
+            <p id="saludo">donde habitan las palabras olvidadas</p>
         </div>
-        <div class="campo">
-            <label>contraseña</label>
-            <input type="password" id="passwordInput" placeholder="••••••">
+        <img class="imagen-librero" src="https://cdn.pixabay.com/photo/2017/08/06/21/48/books-2596809_1280.jpg" 
+             alt="Librero antiguo" onerror="this.src='https://picsum.photos/id/20/1100/400'">
+        <div class="botones">
+            <button class="btn-librero" id="btnEscribir">📝 panel de escritura</button>
+            <button class="btn-librero" id="btnLeer">📖 leer aportes</button>
         </div>
-        <div class="campo">
-            <label>seudónimo (solo para registro)</label>
-            <input type="text" id="seudonimoInput" placeholder="nombre en las sombras">
+        <div id="panelDinamico" class="panel">
+            <h2>▸ elige una opción</h2>
+            <p style="color:#555; text-align:center;">Selecciona "panel de escritura" o "leer aportes".</p>
         </div>
-        <div class="botones-modal">
-            <button id="btnAcceder">Acceder</button>
-            <button id="btnCancelar">Cancelar</button>
+        <div class="logout">
+            <button id="btnLogout">🚪 cerrar sesión</button>
         </div>
-        <div id="errorMsg" class="mensaje-error"></div>
+        <footer>notas al margen — cada palabra es un eco</footer>
     </div>
 </div>
 
+<!-- Música de fondo -->
 <audio id="musicaFondo" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8f7b6c6.mp3?filename=ambient-piano-10740.mp3" type="audio/mpeg">
 </audio>
-<div id="btnMusica" class="btn-musica" title="Música">🎵</div>
+<button id="btnMusica" class="btn-musica" title="Música" aria-label="Activar/desactivar música">🎵</button>
 
 <script>
-    // ========== AUTENTICACIÓN ==========
-    const btnEntrar = document.getElementById('btnEntrar');
-    const puerta = document.getElementById('puerta');
-    const modal = document.getElementById('modalLogin');
-    const loginInput = document.getElementById('loginInput');
-    const passwordInput = document.getElementById('passwordInput');
-    const seudonimoInput = document.getElementById('seudonimoInput');
-    const btnAcceder = document.getElementById('btnAcceder');
-    const btnCancelar = document.getElementById('btnCancelar');
-    const errorMsg = document.getElementById('errorMsg');
-
-    btnEntrar.addEventListener('click', () => {
-        puerta.classList.add('puerta-abierta');
-        btnEntrar.disabled = true;
-        setTimeout(() => {
-            modal.style.display = 'flex';
-            loginInput.focus();
-        }, 400);
-        iniciarMusica();
-    });
-
-    function ocultarModal() {
-        modal.style.display = 'none';
-        errorMsg.textContent = '';
-    }
-    btnCancelar.addEventListener('click', ocultarModal);
-    modal.addEventListener('click', (e) => { if(e.target === modal) ocultarModal(); });
-
-    async function manejarAcceso() {
-        const email = loginInput.value.trim();
-        const password = passwordInput.value;
-        const pseudonym = seudonimoInput.value.trim();
-
-        if (!email || !password) {
-            errorMsg.textContent = '❌ Email y contraseña son obligatorios.';
-            return;
-        }
-        if (password.length < 6) {
-            errorMsg.textContent = '❌ La contraseña debe tener al menos 6 caracteres.';
-            return;
-        }
-
-        try {
-            // Usar supabaseClient en lugar de supabase
-            let { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error && error.message.includes('Invalid login credentials')) {
-                if (!pseudonym) {
-                    errorMsg.textContent = '❌ Para registrarte, debes elegir un seudónimo.';
-                    return;
-                }
-                const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
-                    email, password,
-                    options: { data: { pseudonym } }
-                });
-                if (signUpError) throw signUpError;
-                if (signUpData.user) {
-                    await supabaseClient.from('profiles').insert([{ id: signUpData.user.id, pseudonym, email }]);
-                    window.location.href = 'librero.html';
-                    return;
-                }
-            } else if (error) {
-                throw error;
-            } else {
-                window.location.href = 'librero.html';
-            }
-        } catch (err) {
-            errorMsg.textContent = `⚠️ Error: ${err.message}`;
-        }
-    }
-
-    btnAcceder.addEventListener('click', manejarAcceso);
-    [loginInput, passwordInput, seudonimoInput].forEach(inp => inp.addEventListener('keypress', (e) => {
-        if(e.key === 'Enter') manejarAcceso();
-    }));
-
-    // ========== MÚSICA ==========
+    // ========== VARIABLES GLOBALES ==========
+    let currentUser = null;
+    let currentPseudonym = '';
     const audio = document.getElementById('musicaFondo');
     const btnMusica = document.getElementById('btnMusica');
-    let musicaIniciada = false;
+
+    // ========== FUNCIONES DE UTILIDAD ==========
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function mostrarPantalla(pantalla) {
+        document.getElementById('pantallaLogin').style.display = pantalla === 'login' ? 'flex' : 'none';
+        document.getElementById('pantallaLibrero').style.display = pantalla === 'librero' ? 'block' : 'none';
+        if (pantalla === 'login') {
+            document.getElementById('btnEntrar').disabled = false;
+            document.getElementById('puerta').classList.remove('puerta-abierta');
+            document.getElementById('modalLogin').style.display = 'none';
+        }
+    }
 
     function iniciarMusica() {
-        if (!musicaIniciada) {
+        if (audio.paused) {
             audio.play().catch(e => console.log("Necesita interacción del usuario"));
-            musicaIniciada = true;
             btnMusica.classList.add('activo');
             localStorage.setItem('musicaActiva', 'true');
         }
@@ -365,7 +580,7 @@
 
     function toggleMusica() {
         if (audio.paused) {
-            audio.play();
+            audio.play().catch(e => console.log("Error al reproducir:", e));
             btnMusica.classList.add('activo');
             localStorage.setItem('musicaActiva', 'true');
         } else {
@@ -375,11 +590,323 @@
         }
     }
 
-    btnMusica.addEventListener('click', toggleMusica);
-
-    if (localStorage.getItem('musicaActiva') === 'true') {
-        btnMusica.classList.add('activo');
+    // ========== FUNCIONES DE AUTENTICACIÓN ==========
+    async function verificarSesion() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+            currentUser = session.user;
+            await cargarPerfil();
+            mostrarPantalla('librero');
+        } else {
+            mostrarPantalla('login');
+        }
     }
+
+    async function cargarPerfil() {
+        const { data: profile, error } = await supabaseClient
+            .from('profiles')
+            .select('pseudonym')
+            .eq('id', currentUser.id)
+            .single();
+
+        if (error && error.message && !error.message.includes('No rows found')) {
+            console.error('Error al cargar perfil:', error);
+        }
+
+        if (profile && profile.pseudonym) {
+            currentPseudonym = profile.pseudonym;
+        } else {
+            currentPseudonym = currentUser.user_metadata?.pseudonym || (currentUser.email ? currentUser.email.split('@')[0] : 'visitante');
+            if (!profile) {
+                const { error: profileInsertError } = await supabaseClient
+                    .from('profiles')
+                    .insert([{ id: currentUser.id, pseudonym: currentPseudonym, email: currentUser.email }]);
+
+                if (profileInsertError) {
+                    console.error('Error al crear perfil:', profileInsertError);
+                }
+            }
+        }
+
+        document.getElementById('saludo').innerHTML = `donde habitan las palabras olvidadas — ✦ ${escapeHtml(currentPseudonym)}`;
+    }
+
+    async function manejarLogin() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const errorMsg = document.getElementById('errorMsgLogin');
+
+        if (!email || !password) {
+            errorMsg.textContent = '❌ Email y contraseña son obligatorios.';
+            return;
+        }
+        if (!email.includes('@')) {
+            errorMsg.textContent = '❌ El email no es válido.';
+            return;
+        }
+        if (password.length < 6) {
+            errorMsg.textContent = '❌ La contraseña debe tener al menos 6 caracteres.';
+            return;
+        }
+
+        try {
+            document.getElementById('btnAcceder').disabled = true;
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            document.getElementById('btnAcceder').disabled = false;
+            
+            if (error) {
+                if (error.message.includes('Invalid login credentials')) {
+                    errorMsg.textContent = '❌ Email o contraseña incorrectos.';
+                } else {
+                    errorMsg.textContent = `⚠️ Error: ${error.message}`;
+                }
+            } else {
+                await verificarSesion();
+            }
+        } catch (err) {
+            document.getElementById('btnAcceder').disabled = false;
+            errorMsg.textContent = `⚠️ Error: ${err.message}`;
+        }
+    }
+
+    async function manejarRegistro() {
+        const email = document.getElementById('registerEmail').value.trim();
+        const password = document.getElementById('registerPassword').value;
+        const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+        const pseudonym = document.getElementById('registerSeudonym').value.trim();
+        const errorMsg = document.getElementById('errorMsgRegistro');
+
+        if (!email || !password || !passwordConfirm || !pseudonym) {
+            errorMsg.textContent = '❌ Todos los campos son obligatorios.';
+            return;
+        }
+        if (!email.includes('@')) {
+            errorMsg.textContent = '❌ El email no es válido.';
+            return;
+        }
+        if (password.length < 6) {
+            errorMsg.textContent = '❌ La contraseña debe tener al menos 6 caracteres.';
+            return;
+        }
+        if (password !== passwordConfirm) {
+            errorMsg.textContent = '❌ Las contraseñas no coinciden.';
+            return;
+        }
+        if (pseudonym.length < 3) {
+            errorMsg.textContent = '❌ El seudónimo debe tener al menos 3 caracteres.';
+            return;
+        }
+
+        try {
+            document.getElementById('btnRegistrar').disabled = true;
+            const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: { data: { pseudonym } }
+            });
+            
+            if (signUpError) throw signUpError;
+            
+            if (signUpData.user) {
+                errorMsg.textContent = '✅ Registro exitoso. Verifica tu email y luego accede.';
+                setTimeout(() => {
+                    ocultarModalLogin();
+                    document.querySelector('[data-tab="login"]').click();
+                }, 2000);
+            }
+            document.getElementById('btnRegistrar').disabled = false;
+        } catch (err) {
+            document.getElementById('btnRegistrar').disabled = false;
+            const message = (err.message || '').toLowerCase();
+            if (message.includes('already registered')) {
+                errorMsg.textContent = '❌ Este email ya está registrado.';
+            } else if (message.includes('email rate limit exceeded') || message.includes('too many requests')) {
+                errorMsg.textContent = '⚠️ Demasiados intentos. Espera unos minutos y vuelve a intentarlo.';
+            } else {
+                errorMsg.textContent = `⚠️ Error: ${err.message}`;
+            }
+        }
+    }
+
+    function ocultarModalLogin() {
+        document.getElementById('modalLogin').style.display = 'none';
+        document.getElementById('errorMsgLogin').textContent = '';
+        document.getElementById('errorMsgRegistro').textContent = '';
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('registerEmail').value = '';
+        document.getElementById('registerPassword').value = '';
+        document.getElementById('registerPasswordConfirm').value = '';
+        document.getElementById('registerSeudonym').value = '';
+        document.getElementById('btnEntrar').disabled = false;
+        document.getElementById('puerta').classList.remove('puerta-abierta');
+        const loginTab = document.querySelector('[data-tab="login"]');
+        if (loginTab) loginTab.click();
+    }
+
+    // ========== FUNCIONES DEL LIBRERO ==========
+    async function publicarPost(contenido) {
+        if (!contenido.trim()) return false;
+        const { error } = await supabaseClient
+            .from('posts')
+            .insert([{
+                user_id: currentUser.id,
+                content: contenido.trim(),
+                pseudonym: currentPseudonym
+            }]);
+        if (error) {
+            console.error('Error al publicar:', error);
+            return false;
+        }
+        return true;
+    }
+
+    async function obtenerPosts() {
+        const { data, error } = await supabaseClient
+            .from('posts')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (error) {
+            console.error('Error al obtener posts:', error);
+            return [];
+        }
+        return data;
+    }
+
+    function mostrarEscritura() {
+        const panel = document.getElementById('panelDinamico');
+        panel.innerHTML = `
+            <h2>▸ escribe en el margen</h2>
+            <textarea id="textoNota" rows="5" placeholder="¿qué pensamientos agonizan en tu librero interno?" maxlength="5000"></textarea>
+            <button class="btn-submit" id="btnPublicar">publicar nota</button>
+            <div id="msgEscritura" style="margin-top:12px; font-size:0.75rem;"></div>
+        `;
+        document.getElementById('btnPublicar').addEventListener('click', async () => {
+            const texto = document.getElementById('textoNota').value;
+            const msgDiv = document.getElementById('msgEscritura');
+            const btn = document.getElementById('btnPublicar');
+            
+            if (!texto.trim()) {
+                msgDiv.innerHTML = '❌ el texto no puede estar vacío.';
+                return;
+            }
+            
+            btn.disabled = true;
+            const ok = await publicarPost(texto);
+            btn.disabled = false;
+            
+            if (ok) {
+                msgDiv.innerHTML = '✅ nota publicada en el librero.';
+                document.getElementById('textoNota').value = '';
+                setTimeout(() => msgDiv.innerHTML = '', 3000);
+            } else {
+                msgDiv.innerHTML = '⚠️ error al guardar. Revisa tu conexión o las políticas RLS.';
+            }
+        });
+    }
+
+    async function mostrarLectura() {
+        const panel = document.getElementById('panelDinamico');
+        panel.innerHTML = `<h2>▸ voces susurradas al margen</h2><div id="listaContainer">Cargando...</div>`;
+        const posts = await obtenerPosts();
+        const container = document.getElementById('listaContainer');
+        if (!posts || posts.length === 0) {
+            container.innerHTML = '<div class="vacio">📭 aún no hay notas. sé el primero en escribir.</div>';
+            return;
+        }
+        let html = '<div class="lista-aportes">';
+        posts.forEach(post => {
+            html += `
+                <div class="aporte">
+                    <div class="meta">
+                        <span class="seudonimo">✒️ ${escapeHtml(post.pseudonym)}</span>
+                        <span>📅 ${new Date(post.created_at).toLocaleString()}</span>
+                    </div>
+                    <div class="contenido">${escapeHtml(post.content)}</div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    async function logout() {
+        await supabaseClient.auth.signOut();
+        currentUser = null;
+        currentPseudonym = '';
+        audio.pause();
+        btnMusica.classList.remove('activo');
+        await verificarSesion();
+    }
+
+    // ========== EVENT LISTENERS ==========
+    window.addEventListener('DOMContentLoaded', async () => {
+        // Verificar sesión al cargar
+        await verificarSesion();
+
+        // Botón Entrar
+        document.getElementById('btnEntrar').addEventListener('click', () => {
+            document.getElementById('puerta').classList.add('puerta-abierta');
+            document.getElementById('btnEntrar').disabled = true;
+            setTimeout(() => {
+                document.getElementById('modalLogin').style.display = 'flex';
+                document.getElementById('loginEmail').focus();
+            }, 400);
+            iniciarMusica();
+        });
+
+        // Tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('activo'));
+                btn.classList.add('activo');
+                document.getElementById(`tab-${tabName}`).classList.add('activo');
+                document.getElementById('errorMsgLogin').textContent = '';
+                document.getElementById('errorMsgRegistro').textContent = '';
+                if (tabName === 'login') {
+                    document.getElementById('loginEmail').focus();
+                } else {
+                    document.getElementById('registerEmail').focus();
+                }
+            });
+        });
+
+        // Botones Login/Registro
+        document.getElementById('btnAcceder').addEventListener('click', manejarLogin);
+        document.getElementById('btnRegistrar').addEventListener('click', manejarRegistro);
+        document.getElementById('btnCancelarLogin').addEventListener('click', ocultarModalLogin);
+        document.getElementById('btnCancelarRegistro').addEventListener('click', ocultarModalLogin);
+        document.getElementById('modalLogin').addEventListener('click', (e) => {
+            if(e.target === document.getElementById('modalLogin')) ocultarModalLogin();
+        });
+
+        // Enter en inputs
+        [document.getElementById('loginEmail'), document.getElementById('loginPassword')].forEach(inp => {
+            inp.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') manejarLogin();
+            });
+        });
+        [document.getElementById('registerEmail'), document.getElementById('registerPassword'), 
+         document.getElementById('registerPasswordConfirm'), document.getElementById('registerSeudonym')].forEach(inp => {
+            inp.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') manejarRegistro();
+            });
+        });
+
+        // Botones Librero
+        document.getElementById('btnEscribir').addEventListener('click', mostrarEscritura);
+        document.getElementById('btnLeer').addEventListener('click', mostrarLectura);
+        document.getElementById('btnLogout').addEventListener('click', logout);
+
+        // Música
+        btnMusica.addEventListener('click', toggleMusica);
+        if (localStorage.getItem('musicaActiva') === 'true') {
+            btnMusica.classList.add('activo');
+        }
+    });
 </script>
+
 </body>
 </html>

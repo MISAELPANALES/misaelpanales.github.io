@@ -42,7 +42,7 @@ CREATE POLICY "Lectura de posts para todos"
     USING (auth.role() = 'authenticated');
 
 -- Posts: solo el usuario autenticado puede insertar sus propios posts
-CREATE POLICY "Insercion de posts propia"
+CREATE POLICY "Inserción de posts propia"
     ON public.posts FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
