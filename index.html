@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notas al Margen - Acceso</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #080808;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            color: #999;
+        }
+        .contenedor-central {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            perspective: 1200px;
+        }
+        .letrero {
+            font-size: 1.2rem;
+            text-transform: lowercase;
+            letter-spacing: 4px;
+            color: #666;
+            margin-bottom: 1.5rem;
+            max-width: 450px;
+            line-height: 1.8;
+            animation: vapor 4s ease-in-out infinite alternate;
+        }
+        .btn-entrar {
+            background: transparent;
+            border: 1px solid #333;
+            color: #555;
+            padding: 0.6rem 2rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-family: inherit;
+            margin-bottom: 3rem;
+            transition: all 0.5s ease;
+        }
+        .btn-entrar:hover:not(:disabled) {
+            color: #fff;
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+        .btn-entrar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .marco-puerta {
+            width: 180px;
+            height: 320px;
+            border: 2px solid #1a1a1a;
+            background: #020202;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+        .puerta {
+            width: 100%;
+            height: 100%;
+            background: #111;
+            border: 1px solid #1f1f1f;
+            position: absolute;
+            transform-origin: left;
+            transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+        }
+        .picaporte {
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            position: relative;
+        }
+        .picaporte::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: -6px;
+            width: 8px;
+            height: 2px;
+            background: #333;
+        }
+        .puerta-abierta {
+            transform: rotateY(-115deg);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-contenido {
+            background: #0c0c0c;
+            border: 1px solid #2a2a2a;
+            padding: 2rem;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            animation: aparecerModal 0.4s ease-out;
+        }
+        @keyframes aparecerModal {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-contenido h3 {
+            color: #ccc;
+            letter-spacing: 3px;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-transform: lowercase;
+            font-weight: normal;
+        }
+        .campo {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+        .campo label {
+            display: block;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.4rem;
+            color: #777;
+            text-transform: uppercase;
+        }
+        .campo input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #2a2a2a;
+            padding: 0.6rem;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .campo input:focus {
+            border-color: #777;
+        }
+        .botones-modal {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1.8rem;
+        }
+        .botones-modal button {
+            background: transparent;
+            border: 1px solid #333;
+            color: #aaa;
+            padding: 0.5rem 1rem;
+            font-family: inherit;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+            flex: 1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .botones-modal button:hover {
+            color: white;
+            border-color: white;
+        }
+        .mensaje-error {
+            color: #aa5555;
+            font-size: 0.7rem;
+            margin-top: 1rem;
+            letter-spacing: 1px;
+        }
+        @keyframes vapor {
+            0% { opacity: 0.6; text-shadow: 0 0 4px rgba(255,255,255,0); }
+            100% { opacity: 0.9; text-shadow: 0 0 8px rgba(255,255,255,0.15); }
+        }
+        .btn-musica {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 2000;
+            transition: all 0.3s;
+            color: #aaa;
+        }
+        .btn-musica:hover {
+            border-color: #aaa;
+            color: white;
+            transform: scale(1.05);
+        }
+        .btn-musica.activo {
+            color: #8c8;
+            border-color: #6a9a6a;
+            box-shadow: 0 0 8px rgba(100,150,100,0.3);
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // === CONFIGURACIÓN SUPABASE ===
+        // REEMPLAZA con tus credenciales reales
+        const SUPABASE_URL = 'https://ifuxbjkkagfxnilkliez.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_GnFnx7uWrbanBs_BVcgzBw_eljnBgZE';
+        
+        // Inicialización correcta del cliente
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+</head>
+<body>
+<div class="contenedor-central" id="escena">
+    <div class="letrero">textos muertos en plumas agonizantes</div>
+    <button class="btn-entrar" id="btnEntrar">Entrar</button>
+    <div class="marco-puerta">
+        <div class="puerta" id="puerta">
+            <div class="picaporte"></div>
+        </div>
+    </div>
+</div>
+
+<div id="modalLogin" class="modal">
+    <div class="modal-contenido">
+        <h3>acceso al margen</h3>
+        <div class="campo">
+            <label>email (login)</label>
+            <input type="email" id="loginInput" placeholder="tu@email.com" autocomplete="off">
+        </div>
+        <div class="campo">
+            <label>contraseña</label>
+            <input type="password" id="passwordInput" placeholder="••••••">
+        </div>
+        <div class="campo">
+            <label>seudónimo (solo para registro)</label>
+            <input type="text" id="seudonimoInput" placeholder="nombre en las sombras">
+        </div>
+        <div class="botones-modal">
+            <button id="btnAcceder">Acceder</button>
+            <button id="btnCancelar">Cancelar</button>
+        </div>
+        <div id="errorMsg" class="mensaje-error"></div>
+    </div>
+</div>
+
+<audio id="musicaFondo" loop preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8f7b6c6.mp3?filename=ambient-piano-10740.mp3" type="audio/mpeg">
+</audio>
+<div id="btnMusica" class="btn-musica" title="Música">🎵</div>
+
+<script>
+    // ========== AUTENTICACIÓN ==========
+    const btnEntrar = document.getElementById('btnEntrar');
+    const puerta = document.getElementById('puerta');
+    const modal = document.getElementById('modalLogin');
+    const loginInput = document.getElementById('loginInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const seudonimoInput = document.getElementById('seudonimoInput');
+    const btnAcceder = document.getElementById('btnAcceder');
+    const btnCancelar = document.getElementById('btnCancelar');
+    const errorMsg = document.getElementById('errorMsg');
+
+    btnEntrar.addEventListener('click', () => {
+        puerta.classList.add('puerta-abierta');
+        btnEntrar.disabled = true;
+        setTimeout(() => {
+            modal.style.display = 'flex';
+            loginInput.focus();
+        }, 400);
+        iniciarMusica();
+    });
+
+    function ocultarModal() {
+        modal.style.display = 'none';
+        errorMsg.textContent = '';
+    }
+    btnCancelar.addEventListener('click', ocultarModal);
+    modal.addEventListener('click', (e) => { if(e.target === modal) ocultarModal(); });
+
+    async function manejarAcceso() {
+        const email = loginInput.value.trim();
+        const password = passwordInput.value;
+        const pseudonym = seudonimoInput.value.trim();
+
+        if (!email || !password) {
+            errorMsg.textContent = '❌ Email y contraseña son obligatorios.';
+            return;
+        }
+        if (password.length < 6) {
+            errorMsg.textContent = '❌ La contraseña debe tener al menos 6 caracteres.';
+            return;
+        }
+
+        try {
+            // Usar supabaseClient en lugar de supabase
+            let { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error && error.message.includes('Invalid login credentials')) {
+                if (!pseudonym) {
+                    errorMsg.textContent = '❌ Para registrarte, debes elegir un seudónimo.';
+                    return;
+                }
+                const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+                    email, password,
+                    options: { data: { pseudonym } }
+                });
+                if (signUpError) throw signUpError;
+                if (signUpData.user) {
+                    await supabaseClient.from('profiles').insert([{ id: signUpData.user.id, pseudonym, email }]);
+                    window.location.href = 'librero.html';
+                    return;
+                }
+            } else if (error) {
+                throw error;
+            } else {
+                window.location.href = 'librero.html';
+            }
+        } catch (err) {
+            errorMsg.textContent = `⚠️ Error: ${err.message}`;
+        }
+    }
+
+    btnAcceder.addEventListener('click', manejarAcceso);
+    [loginInput, passwordInput, seudonimoInput].forEach(inp => inp.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') manejarAcceso();
+    }));
+
+    // ========== MÚSICA ==========
+    const audio = document.getElementById('musicaFondo');
+    const btnMusica = document.getElementById('btnMusica');
+    let musicaIniciada = false;
+
+    function iniciarMusica() {
+        if (!musicaIniciada) {
+            audio.play().catch(e => console.log("Necesita interacción del usuario"));
+            musicaIniciada = true;
+            btnMusica.classList.add('activo');
+            localStorage.setItem('musicaActiva', 'true');
+        }
+    }
+
+    function toggleMusica() {
+        if (audio.paused) {
+            audio.play();
+            btnMusica.classList.add('activo');
+            localStorage.setItem('musicaActiva', 'true');
+        } else {
+            audio.pause();
+            btnMusica.classList.remove('activo');
+            localStorage.setItem('musicaActiva', 'false');
+        }
+    }
+
+    btnMusica.addEventListener('click', toggleMusica);
+
+    if (localStorage.getItem('musicaActiva') === 'true') {
+        btnMusica.classList.add('activo');
+    }
+</script>
+</body>
+</html>
