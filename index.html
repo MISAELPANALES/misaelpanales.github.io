@@ -439,7 +439,6 @@
             gap: 1.5rem;
         }
 
-        /* Estilo para el scrollbar */
         .lista-aportes::-webkit-scrollbar {
             width: 8px;
         }
@@ -570,7 +569,7 @@
 <div id="pantallaLogin">
     <div class="contenedor-central" id="escena">
         <div class="letrero">Textos en papel, ecos en la eternidad</div>
-        <button class="btn-entrar" id="btnEntrar">Comenzar la lectura</button>
+        <button type="button" class="btn-entrar" id="btnEntrar">Comenzar la lectura</button>
         <div class="marco-puerta">
             <div class="puerta" id="puerta">
                 <div class="picaporte"></div>
@@ -583,8 +582,8 @@
             <h3>Santuario Literario</h3>
             
             <div class="tabs-acceso">
-                <button class="tab-btn activo" data-tab="login">Acceder</button>
-                <button class="tab-btn" data-tab="registro">Unirse</button>
+                <button type="button" class="tab-btn activo" data-tab="login">Acceder</button>
+                <button type="button" class="tab-btn" data-tab="registro">Unirse</button>
             </div>
 
             <div id="tab-login" class="tab-content activo">
@@ -597,8 +596,8 @@
                     <input type="password" id="loginPassword" placeholder="••••••">
                 </div>
                 <div class="botones-modal">
-                    <button id="btnAcceder">Ingresar</button>
-                    <button id="btnCancelarLogin">Cancelar</button>
+                    <button type="button" id="btnAcceder">Ingresar</button>
+                    <button type="button" id="btnCancelarLogin">Cancelar</button>
                 </div>
                 <div id="errorMsgLogin" class="mensaje-error"></div>
             </div>
@@ -621,8 +620,8 @@
                     <input type="text" id="registerSeudonym" placeholder="Firma de autor" maxlength="30">
                 </div>
                 <div class="botones-modal">
-                    <button id="btnRegistrar">Registrarse</button>
-                    <button id="btnCancelarRegistro">Cancelar</button>
+                    <button type="button" id="btnRegistrar">Registrarse</button>
+                    <button type="button" id="btnCancelarRegistro">Cancelar</button>
                 </div>
                 <div id="errorMsgRegistro" class="mensaje-error"></div>
             </div>
@@ -639,15 +638,15 @@
         <img class="imagen-librero" src="https://cdn.pixabay.com/photo/2017/08/06/21/48/books-2596809_1280.jpg" 
              alt="Librero antiguo" onerror="this.src='https://picsum.photos/id/20/1100/400'">
         <div class="botones">
-            <button class="btn-librero" id="btnEscribir">Escribir Análisis</button>
-            <button class="btn-librero" id="btnLeer">Leer Perspectivas</button>
+            <button type="button" class="btn-librero" id="btnEscribir">Escribir Análisis</button>
+            <button type="button" class="btn-librero" id="btnLeer">Leer Perspectivas</button>
         </div>
         <div id="panelDinamico" class="panel">
             <h2>Elige una senda</h2>
             <p style="color:var(--text-muted); text-align:center;">Selecciona "Escribir Análisis" para compartir tus ideas o "Leer Perspectivas" para explorar el ágora.</p>
         </div>
         <div class="logout">
-            <button id="btnLogout">Cerrar el libro (Salir)</button>
+            <button type="button" id="btnLogout">Cerrar el libro (Salir)</button>
         </div>
         <footer>Notas al Margen — Cada palabra es un eco</footer>
     </div>
@@ -656,7 +655,7 @@
 <audio id="musicaFondo" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8f7b6c6.mp3?filename=ambient-piano-10740.mp3" type="audio/mpeg">
 </audio>
-<button id="btnMusica" class="btn-musica" title="Música" aria-label="Activar/desactivar música">🎵</button>
+<button type="button" id="btnMusica" class="btn-musica" title="Música" aria-label="Activar/desactivar música">🎵</button>
 
 <script>
     // ========== VARIABLES GLOBALES ==========
@@ -694,6 +693,17 @@
         }
     }
 
+    function actualizarEstadoMusica() {
+        const activa = localStorage.getItem('musicaActiva') === 'true';
+        if (activa) {
+            btnMusica.classList.add('activo');
+        } else {
+            btnMusica.classList.remove('activo');
+        }
+        btnMusica.title = activa ? 'Desactivar música' : 'Activar música';
+        btnMusica.setAttribute('aria-label', activa ? 'Desactivar música' : 'Activar música');
+    }
+
     function toggleMusica() {
         if (audio.paused) {
             audio.play().catch(e => console.log("Error al reproducir:", e));
@@ -704,6 +714,16 @@
             btnMusica.classList.remove('activo');
             localStorage.setItem('musicaActiva', 'false');
         }
+        actualizarEstadoMusica();
+    }
+
+    function mostrarModalLogin() {
+        document.getElementById('errorMsgLogin').textContent = '';
+        document.getElementById('errorMsgRegistro').textContent = '';
+        document.getElementById('modalLogin').style.display = 'flex';
+        const loginTab = document.querySelector('[data-tab="login"]');
+        if (loginTab) loginTab.click();
+        document.getElementById('loginEmail').focus();
     }
 
     // ========== FUNCIONES DE AUTENTICACIÓN ==========
@@ -740,6 +760,15 @@
 
                 if (profileInsertError) {
                     console.error('Error al crear perfil:', profileInsertError);
+                }
+            } else {
+                const { error: profileUpdateError } = await supabaseClient
+                    .from('profiles')
+                    .update({ pseudonym: currentPseudonym })
+                    .eq('id', currentUser.id);
+
+                if (profileUpdateError) {
+                    console.error('Error al actualizar perfil:', profileUpdateError);
                 }
             }
         }
@@ -827,7 +856,8 @@
                 errorMsg.textContent = '✅ Registro exitoso. Verifica tu email y luego accede.';
                 setTimeout(() => {
                     ocultarModalLogin();
-                    document.querySelector('[data-tab="login"]').click();
+                    const loginTab = document.querySelector('[data-tab="login"]');
+                    if (loginTab) loginTab.click();
                 }, 2000);
             }
             document.getElementById('btnRegistrar').disabled = false;
@@ -861,77 +891,120 @@
     }
 
     // ========== FUNCIONES DEL LIBRERO ==========
-    async function publicarPost(contenido) {
-        if (!contenido.trim()) return false;
-        const { error } = await supabaseClient
+    async function manejarPublicacion() {
+        if (!currentUser) {
+            const msgDiv = document.getElementById('msgEscritura');
+            if (msgDiv) msgDiv.innerHTML = 'Debes iniciar sesión para publicar.';
+            return;
+        }
+
+        const texto = document.getElementById('textoNota').value;
+        const archivoInput = document.getElementById('archivoLibro');
+        const msgDiv = document.getElementById('msgEscritura');
+        const btn = document.getElementById('btnPublicar');
+        
+        if (!texto.trim() && archivoInput.files.length === 0) {
+            msgDiv.innerHTML = 'Debes escribir un texto o adjuntar un manuscrito.';
+            return;
+        }
+        
+        btn.disabled = true;
+        msgDiv.innerHTML = 'Sellando el pergamino...';
+        
+        let archivoUrl = null;
+        
+        if (archivoInput.files.length > 0) {
+            const archivo = archivoInput.files[0];
+            const rutaArchivo = `${currentUser.id}/${Date.now()}_${archivo.name}`;
+            
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                .from('manuscritos')
+                .upload(rutaArchivo, archivo);
+                
+            if (uploadError) {
+                msgDiv.innerHTML = 'Error al subir el documento. Verifica el peso o tu conexión.';
+                btn.disabled = false;
+                return;
+            }
+            
+            const { data: publicUrlData, error: publicUrlError } = supabaseClient.storage
+                .from('manuscritos')
+                .getPublicUrl(rutaArchivo);
+                
+            if (publicUrlError || !publicUrlData?.publicUrl) {
+                msgDiv.innerHTML = 'Error al generar el enlace público del archivo.';
+                btn.disabled = false;
+                return;
+            }
+
+            archivoUrl = publicUrlData.publicUrl;
+        }
+        
+        const { error: dbError } = await supabaseClient
             .from('posts')
             .insert([{
                 user_id: currentUser.id,
-                content: contenido.trim(),
-                pseudonym: currentPseudonym
+                content: texto.trim(),
+                pseudonym: currentPseudonym,
+                archivo_url: archivoUrl
             }]);
-        if (error) {
-            console.error('Error al publicar:', error);
-            return false;
+            
+        btn.disabled = false;
+        
+        if (dbError) {
+            msgDiv.innerHTML = 'Error al registrar la obra en el ágora.';
+        } else {
+            msgDiv.innerHTML = 'Obra añadida con éxito.';
+            document.getElementById('textoNota').value = '';
+            archivoInput.value = '';
+            setTimeout(() => msgDiv.innerHTML = '', 3000);
         }
-        return true;
-    }
-
-    async function obtenerPosts() {
-        const { data, error } = await supabaseClient
-            .from('posts')
-            .select('*')
-            .order('created_at', { ascending: false });
-        if (error) {
-            console.error('Error al obtener posts:', error);
-            return [];
-        }
-        return data;
     }
 
     function mostrarEscritura() {
         const panel = document.getElementById('panelDinamico');
         panel.innerHTML = `
-            <h2>Plasmar un Análisis</h2>
-            <textarea id="textoNota" rows="6" placeholder="Escribe aquí tu perspectiva sobre las lecturas..." maxlength="5000"></textarea>
-            <button class="btn-submit" id="btnPublicar">Añadir al Ágora</button>
+            <h2>Plasmar un Análisis o Manuscrito</h2>
+            <textarea id="textoNota" rows="5" placeholder="Escribe aquí tu perspectiva o una presentación de tu obra..." maxlength="5000"></textarea>
+            <div style="margin: 1.5rem 0; text-align: center; border: 1px dashed var(--border-light); padding: 1.5rem; border-radius: 8px; background: #faf8f2;">
+                <label style="display:block; margin-bottom: 0.5rem; font-family: var(--font-title); font-style:italic;">Adjuntar archivo digital (PDF o Word)</label>
+                <input type="file" id="archivoLibro" accept=".pdf,.doc,.docx" style="color: var(--text-muted); font-family: var(--font-body); font-size: 0.9rem;">
+            </div>
+            <button type="button" class="btn-submit" id="btnPublicar">Añadir al Ágora</button>
             <div id="msgEscritura" style="margin-top:15px; font-size:0.9rem; text-align:center; color: var(--accent-gold);"></div>
         `;
-        document.getElementById('btnPublicar').addEventListener('click', async () => {
-            const texto = document.getElementById('textoNota').value;
-            const msgDiv = document.getElementById('msgEscritura');
-            const btn = document.getElementById('btnPublicar');
-            
-            if (!texto.trim()) {
-                msgDiv.innerHTML = 'El pergamino no puede estar vacío.';
-                return;
-            }
-            
-            btn.disabled = true;
-            const ok = await publicarPost(texto);
-            btn.disabled = false;
-            
-            if (ok) {
-                msgDiv.innerHTML = 'Perspectiva añadida con éxito.';
-                document.getElementById('textoNota').value = '';
-                setTimeout(() => msgDiv.innerHTML = '', 3000);
-            } else {
-                msgDiv.innerHTML = 'Error al plasmar el texto. Verifica la conexión.';
-            }
-        });
+        document.getElementById('btnPublicar').addEventListener('click', manejarPublicacion);
     }
 
     async function mostrarLectura() {
         const panel = document.getElementById('panelDinamico');
-        panel.innerHTML = `<h2>Discusiones Recientes</h2><div id="listaContainer" style="text-align:center;">Cargando los ecos...</div>`;
-        const posts = await obtenerPosts();
+        panel.innerHTML = `<h2>Discusiones y Manuscritos</h2><div id="listaContainer" style="text-align:center;">Cargando los ecos...</div>`;
+        
+        const { data: posts, error } = await supabaseClient
+            .from('posts')
+            .select('*')
+            .order('created_at', { ascending: false });
+            
         const container = document.getElementById('listaContainer');
+        
         if (!posts || posts.length === 0) {
             container.innerHTML = '<div class="vacio">El ágora está en silencio. Sé el primero en compartir tu perspectiva.</div>';
             return;
         }
+        
         let html = '<div class="lista-aportes">';
         posts.forEach(post => {
+            let enlaceArchivo = '';
+            if (post.archivo_url) {
+                enlaceArchivo = `
+                    <div style="margin-top: 1.2rem; padding-top: 0.8rem; border-top: 1px dashed var(--border-light); text-align: right;">
+                        <a href="${escapeHtml(post.archivo_url)}" target="_blank" rel="noopener noreferrer" style="color: var(--accent-gold); text-decoration: none; font-weight:700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 5px;">
+                            Leer Manuscrito Adjunto 📖
+                        </a>
+                    </div>
+                `;
+            }
+            
             html += `
                 <div class="aporte">
                     <div class="meta">
@@ -939,6 +1012,7 @@
                         <span>${new Date(post.created_at).toLocaleDateString()}</span>
                     </div>
                     <div class="contenido">${escapeHtml(post.content)}</div>
+                    ${enlaceArchivo}
                 </div>
             `;
         });
@@ -964,8 +1038,7 @@
             document.getElementById('puerta').classList.add('puerta-abierta');
             document.getElementById('btnEntrar').disabled = true;
             setTimeout(() => {
-                document.getElementById('modalLogin').style.display = 'flex';
-                document.getElementById('loginEmail').focus();
+                mostrarModalLogin();
             }, 600);
             iniciarMusica();
         });
@@ -976,7 +1049,8 @@
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
                 document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('activo'));
                 btn.classList.add('activo');
-                document.getElementById(`tab-${tabName}`).classList.add('activo');
+                const tabContent = document.getElementById(`tab-${tabName}`);
+                if (tabContent) tabContent.classList.add('activo');
                 document.getElementById('errorMsgLogin').textContent = '';
                 document.getElementById('errorMsgRegistro').textContent = '';
                 if (tabName === 'login') {
@@ -1012,9 +1086,13 @@
         document.getElementById('btnLogout').addEventListener('click', logout);
 
         btnMusica.addEventListener('click', toggleMusica);
-        if (localStorage.getItem('musicaActiva') === 'true') {
-            btnMusica.classList.add('activo');
-        }
+        actualizarEstadoMusica();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('modalLogin').style.display === 'flex') {
+                ocultarModalLogin();
+            }
+        });
     });
 </script>
 
